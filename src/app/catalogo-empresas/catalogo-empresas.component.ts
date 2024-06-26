@@ -51,31 +51,8 @@ export class CatalogoEmpresasComponent {
   verProyectos(id: number): void {
     this.flagsProyectos[this.getIndexEmpresa(id)] = !this.flagsProyectos[this.getIndexEmpresa(id)];
   }
-  obtenerModalidad(codigo:number):string {
-    codigo = Number(codigo);  // Convertir a número
-    switch (codigo) {
-        case 0:
-            return "Remoto";
-        case 1:
-            return "Presencial";
-        case 2:
-            return "Mixto";
-        default:
-            return "desconocido";
-    }
-  }
 
-  obtenerRemuneracion(remuneracion:Boolean):string {
-    remuneracion = Boolean(remuneracion); 
-    switch(remuneracion){
-      case true:
-        return "Es remunerable";
-      case false:
-        return "No es remunerable";
-      default:
-        return "Indefinido";
-    }
-  }
+
   
 
   getProyectosEmpresa(idEmpresa:number){
@@ -108,7 +85,7 @@ export class CatalogoEmpresasComponent {
     console.log(this.proyectos);
   }
 
-  //método by rubioalvaradoadrian@gmail.com
+
   abrirEmpresa(id:number){
     this.localStorageService.guardarEnLocal("idEmpresaSeleccionada",id+"");
     this.router.navigate(["/opiniones"])
