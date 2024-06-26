@@ -19,7 +19,7 @@
       <img src="{{empresa.getLogo()}}" alt="${empresa.getNombre()}" class="company-logo">
       <div class="d-flex justify-content-between">
         <h1><strong> {{empresa.getNombre()}} </strong></h1>
-        <button class="btnAbrir" (click)="abrirEmpresa(empresa.getIdEmpresa())">más información</button>
+       
       </div>
       <h3>{{empresa.getDescripcion()}}</h3>
       <!-- boton para ver info de la empresa-->
@@ -33,6 +33,7 @@
           <button id="btnVer" (click)="verProyectos(empresa.getIdEmpresa())">Ver Proyectos</button>
         }
      }
+      <button class="btnAbrir" (click)="abrirEmpresa(empresa.getIdEmpresa())">más información</button>
     
   
   
