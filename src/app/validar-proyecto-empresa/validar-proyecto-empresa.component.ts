@@ -144,4 +144,11 @@ export class ValidarProyectoEmpresaComponent implements OnInit {
     this.proyectosObjeto.forEach(proyecto => { this.proyectos.push(new Proyecto(proyecto.idProyecto, proyecto.idEmpresa, proyecto.nombre, proyecto.descripcion, proyecto.modalidad, proyecto.remuneracion, new Ubicacion(proyecto.ubicacion.ciudad, proyecto.ubicacion.estado), proyecto.estadoDelProyecto, new Date(proyecto.fechaDeExpiracion))) })
     console.log(this.proyectos);
   }
+  public id!:string;
+  guardarId(id:string){
+    this.id=id;
+  }
+  obtenerId():string{
+    return this.id;
+  }
 }
