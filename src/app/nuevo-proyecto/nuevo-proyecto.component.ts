@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Proyecto } from '../models/Proyecto';
 import { Ubicacion } from '../models/Ubicacion';
@@ -7,18 +7,22 @@ import { LocalStorageService } from '../local-storage.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {provideNativeDateAdapter} from '@angular/material/core';
 import { DatabaseService } from '../database.service';
 import { Subscription } from 'rxjs';
+import {MessagesModule} from "primeng/messages";
+import { Message, MessageService } from 'primeng/api';
+
 
 @Component({
   selector: 'app-nuevo-proyecto',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule],
+  imports: [ReactiveFormsModule, RouterModule,MatFormFieldModule, 
+    MatInputModule, MatDatepickerModule,MessagesModule],
   templateUrl: './nuevo-proyecto.component.html',
-  styleUrls: ['./nuevo-proyecto.component.css']
+  styleUrls: ['./nuevo-proyecto.component.css'],
+  providers:[MessageService]
 })
-export class NuevoProyectoComponent implements OnDestroy{
+export class NuevoProyectoComponent implements OnInit{
   public formulario!: FormGroup;
   public hasUbicacion = false;
   public guardado:boolean=false;
@@ -28,8 +32,8 @@ export class NuevoProyectoComponent implements OnDestroy{
   private proyectos: Proyecto[]=[];
   public minDate : Date=new Date();
   private idEmpresa:number=-1;
-  private subs:Subscription[]=[];
-  constructor(private database:DatabaseService, private fb: FormBuilder, private servicio: LocalStorageService, private router: Router) {
+  public messages: Message[] = [{ severity: 'info', detail: 'Message Content' }];
+  constructor(private database:DatabaseService, private fb: FormBuilder, private servicio: LocalStorageService, private router: Router,private mensajes:MessageService) {
 
     //creamos los controles del formulario
     this.formulario = this.fb.group({
@@ -45,11 +49,9 @@ export class NuevoProyectoComponent implements OnDestroy{
     });
 
     //cargamos los proyectos usando el servicio
-    this.subs.push(
       database.getProyectos().subscribe(data=>{this.proyectosObjeto=data
-            this.darFormatoAProyectos();
+        this.darFormatoAProyectos();
       })
-    );
     
 
     //subscriptor al select para mostrar o no "ubicacion"
@@ -83,7 +85,12 @@ export class NuevoProyectoComponent implements OnDestroy{
       
       // Generar un nuevo ID si no hay un proyecto incompleto cargado
       this.formulario.get("txtIdProyecto")?.setValue(this.generarNuevoId());
+
+      //mostrar mensaje sobre LS
     }
+  }
+  ngOnInit(): void {
+    this.messages=[{ severity: 'info', summary: 'localStorage', detail: 'El sistema está haciendo uso del localStorage, favor de no borrarlo' }];
   }
 
   generarNuevoId(): string {
@@ -91,6 +98,7 @@ export class NuevoProyectoComponent implements OnDestroy{
     do {
       nuevoId = this.randomId();
     } while (this.proyectos.some(proyecto => proyecto.getIdProyecto() === nuevoId));
+    this.proyectos=[];
     return nuevoId;
   }
 
@@ -146,9 +154,6 @@ export class NuevoProyectoComponent implements OnDestroy{
   darFormatoAProyectos(){
     this.proyectos=[];
     this.proyectosObjeto.forEach(proyecto=>{this.proyectos.push(new Proyecto(proyecto.idProyecto,proyecto.idEmpresa,proyecto.nombre,proyecto.descripcion,proyecto.modalidad,proyecto.remuneracion,new Ubicacion(proyecto.ubicacion.cuidad,proyecto.ubicacion.estado),proyecto.estadoDelProyecto,new Date(proyecto.fechaDeExpiracion)))})
-  }
-  ngOnDestroy() {
-    this.subs.forEach(sub => sub.unsubscribe());
   }
 }
 

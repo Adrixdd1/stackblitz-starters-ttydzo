@@ -6,11 +6,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Apoyos } from '../models/Apoyos';
 import { LocalStorageService } from '../local-storage.service';
 import { Router } from '@angular/router';
+import { Message } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
   selector: 'app-opiniones',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,MessagesModule],
   templateUrl: './opiniones.component.html',
   styleUrl: './opiniones.component.css'
 })
@@ -24,6 +26,7 @@ export class OpinionesComponent implements OnInit {
    formulario:FormGroup;
    apoyos!:Apoyos;
    mostrando:number=10;//para controlar las opiniones que se muestran
+   public messages: Message[] = [{ severity: 'info', detail: 'Message Content' }];
    constructor(localStorage:LocalStorageService,private router:Router, private servicio:DatabaseService,fb:FormBuilder){
     let idString=localStorage.cargarDeLocal("idEmpresaSeleccionada");
     if(idString){
@@ -35,6 +38,7 @@ export class OpinionesComponent implements OnInit {
     });
    }
    ngOnInit(): void {
+    this.messages=[{ severity: 'info', summary: 'localStorage', detail: 'El sistema está haciendo uso del localStorage, favor de no borrarlo' }];
     this.servicio.getEmpresaById(this.idEmpresa).subscribe(data=>{let empresaAny=<any>data
       this.empresa=new Empresa(empresaAny.idEmpresa,empresaAny.nombre,empresaAny.ocupacionPrincipal,
         empresaAny.descripcion,empresaAny.paginaWeb,empresaAny.logo)
