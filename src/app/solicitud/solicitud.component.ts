@@ -236,7 +236,7 @@ export class SolicitudComponent implements OnInit{
     let horaFin=this.info.get("txtA")?.value;
     let idEmpresa=this.info.get("empresaSelect")?.value;
     let idProyecto=this.info.get("txtSelecPry")?.value;
-    let estancia=new Estancias(fechaInicio,fechaFin,horaInicio,horaFin,matricula,idEmpresa,idProyecto);
+    let estancia=new Estancias(fechaInicio,fechaFin,horaInicio,horaFin,matricula,idEmpresa,idProyecto,"0");
     this.alumno.setFechaEntrega(fechaEntrega);
     this.db.createAlumno(this.alumno).subscribe(data=>{console.log("Alumno actualizado")});
     this.db.createEstancias(estancia).subscribe(data=>{console.log(data)});

@@ -12,11 +12,13 @@ import { Proyecto } from '../models/Proyecto';
 import { Empresa } from '../models/Empresa';
 import { Ubicacion } from '../models/Ubicacion';
 import { DatosEmpresa } from '../models/DatosEmpresa';
+import { Router } from '@angular/router';
+import { ValidarSolicitudComponent } from '../validar-solicitud/validar-solicitud.component';
 
 @Component({
   selector: 'app-solitud-validar',
   standalone: true,
-  imports: [ReactiveFormsModule, MatDatepickerModule,MatNativeDateModule,MatInputModule],
+  imports: [ReactiveFormsModule, MatDatepickerModule,MatNativeDateModule,MatInputModule,ValidarSolicitudComponent],
   templateUrl: './solitud-validar.component.html',
   styleUrl: './solitud-validar.component.css',
 
@@ -31,7 +33,7 @@ export class SolitudValidarComponent implements OnInit {
   empresa!:Empresa;
   datos!:DatosEmpresa;
 
-  constructor(private fb: FormBuilder,private localStorageService: LocalStorageService,private datePipe: DatePipe, private db:DatabaseService) {
+  constructor(private fb: FormBuilder,private localStorageService: LocalStorageService,private datePipe: DatePipe, private db:DatabaseService,private router: Router) {
     let matricula=localStorageService.cargarDeLocal("matriculaSeleccionada");
     if(matricula){
       this.matricula=matricula;
@@ -85,7 +87,7 @@ export class SolitudValidarComponent implements OnInit {
     this.obtenerDatosAlumno(this.matricula);
     this.db.getEstanciaById(this.matricula).subscribe(data=>{
       let estancia = <any>data;
-      this.estancia=new Estancias(estancia.fechaInicio,estancia.fechaTermino,estancia.deHrs,estancia.aHrs,estancia.matricula,estancia.idEmpresa,estancia.idProyecto);
+      this.estancia=new Estancias(estancia.fechaInicio,estancia.fechaTermino,estancia.deHrs,estancia.aHrs,estancia.matricula,estancia.idEmpresa,estancia.idProyecto,estancia.estadoSolicitud);
       console.log(this.estancia);
       //despues de obtener la estancia se obtienen el resto de los datos
       this.bajarDeDB();
@@ -138,7 +140,20 @@ export class SolitudValidarComponent implements OnInit {
       const motivo = prompt("Ingrese el motivo del rechazo:");
       if (motivo) {
         alert(`Solicitud rechazada por el siguiente motivo: ${motivo}`);
-        
+        this.estancia.setEstadoSolicitud("2");
+        this.db.createEstancias(this.estancia).subscribe(data=>{"actualizado"});
+        this.salir();
       }
+    }
+
+    aceptarSolicitud(){
+      alert("Aceptaste la solicitud");
+      this.estancia.setEstadoSolicitud("1");
+      this.db.createEstancias(this.estancia).subscribe(data=>{"actualizado"});
+      this.salir();
+    }
+
+    salir(){
+      this.router.navigate(["/validarSolicitud"])
     }
 }

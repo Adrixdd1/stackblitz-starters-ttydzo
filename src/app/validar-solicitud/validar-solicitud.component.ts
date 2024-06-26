@@ -29,7 +29,7 @@ this.router.navigate(['/solicitudValidar']);
 }
 instanciar(){
   this.alumnosAny.forEach(estancia=>{
-    this.servicios.push(new Estancias(estancia.fechaInicio,estancia.fechaTermino,estancia.deHrs,estancia.aHrs,estancia.matricula,estancia.idEmpresa,estancia.idProyecto));
+    this.servicios.push(new Estancias(estancia.fechaInicio,estancia.fechaTermino,estancia.deHrs,estancia.aHrs,estancia.matricula,estancia.idEmpresa,estancia.idProyecto,estancia.estadoSolicitud));
     
   
   })
@@ -48,4 +48,9 @@ obtenerDatosAlumno(matricula: string ) {
    getSemestre(matricula:string){
     return this.alumnos.find(al=>{al.getMatricula()==matricula})?.getSemestre();
    }
+   salir(matricula:string){
+    this.ls.guardarEnLocal("matriculaSeleccionada",matricula);
+    this.router.navigate(['/solitudValidar']);
+   }
+   
 }
